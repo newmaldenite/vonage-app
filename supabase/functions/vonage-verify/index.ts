@@ -1,9 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
+// import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL") ?? "",
-  Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-);
+// const supabase = createClient(
+//   Deno.env.get("SUPABASE_URL") ?? "",
+//   Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+// );
 
 Deno.serve(async (req: Request) => {
   try {
