@@ -9,7 +9,7 @@ Deno.serve(async (req: Request) => {
   try {
     // First parse the request body
     const body = await req.json();
-    const { action, phoneNumber, requestId, code } = body;
+    const { action, phoneNumber, request_id, code } = body;
 
     const auth = btoa(
       `${Deno.env.get("VONAGE_API_KEY")}:${Deno.env.get("VONAGE_API_SECRET")}`,
@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
 
       case "check": {
         const response = await fetch(
-          `https://api.nexmo.com/v2/verify/${requestId}`,
+          `https://api.nexmo.com/v2/verify/${request_id}`,
           {
             method: "POST",
             headers: {
