@@ -8,16 +8,16 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const name = formData.get("name")?.toString();
-  const username = formData.get("username")?.toString();
+  // const name = formData.get("name")?.toString();
+  // const username = formData.get("username")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  if (!email || !password || !name || !username) {
+  if (!email || !password ) {
     return encodedRedirect(
       "error",
       "/sign-up",
-      "All fields (name, username, email, and password) are required",
+      "All fields (email, and password) are required",
     );
   }
 
@@ -35,21 +35,26 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-up", error.message);
   }
 
-  // Insert additional user data into the "profiles" table
-  const { error: profileError } = await supabase.from("profiles").insert({
-    id: data.user?.id, // Use the user's ID from Supabase
-    name,
-    username,
-  });
+  // // Insert additional user data into the "profiles" table
+  // const { error: profileError } = await supabase.from("profiles").upsert({
+  //   id: data.user?.id, // Use the user's ID from Supabase
+  //   // name,
+  //   // username,
+  // });
 
-  if (profileError) {
-    console.error(profileError.message);
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      "Failed to save additional user information",
-    );
-  }
+  // // additonal logs to see profile error mesasges 
+  // if (profileError) {
+  //   console.error("Profile Error Details:", {
+  //     message: profileError.message,
+  //     code: profileError.code,
+  //     details: profileError.details,
+  //   });
+  //   return encodedRedirect(
+  //     "error",
+  //     "/sign-up",
+  //     "Failed to save additional user information",
+  //   );
+  // }
 
   return encodedRedirect(
     "success",
