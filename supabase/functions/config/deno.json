@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.ns", "deno.unstable", "esnext"],
+    "types": []
+  },
+  "importMap": "./../import_map.json",
+  "tasks": {
+    "dev": "deno run --watch --allow-net --allow-env index.ts"
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    },
+    "exclude": ["**/node_modules/**", "**/.git/**"]
+  },
+  "fmt": {
+    "exclude": ["**/node_modules/**", "**/.git/**"]
+  }
+}

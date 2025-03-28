@@ -1,0 +1,15 @@
+{
+  "deno.enable": true,
+  "deno.config": "supabase/functions/config/deno.json",
+  "deno.importMap": "supabase/import_map.json",
+  "deno.suggest.imports.hosts": {
+    "https://esm.sh": true
+  },
+  "deno.enablePaths": ["supabase/functions"],
+  "deno.lint": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}
