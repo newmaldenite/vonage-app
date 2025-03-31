@@ -1,38 +1,53 @@
-// import { createClient } from "@supabase/supabase-js";
-
-// const supabase = createClient(
-//   Deno.env.get("SUPABASE_URL") ?? "",
-//   Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-// );
-
 Deno.serve(async (req: Request) => {
   try {
-    // First parse the request body
     const body = await req.json();
-    const { action, phoneNumber, request_id, code } = body;
+    const { action, channel, phoneNumber, emailAddress, request_id, code } =
+      body;
 
     const auth = btoa(
       `${Deno.env.get("VONAGE_API_KEY")}:${Deno.env.get("VONAGE_API_SECRET")}`,
     );
 
-    switch (
-      action.toLowerCase() // Normalize action casing
-    ) {
+    switch (action.toLowerCase()) {
       case "start": {
+        // Validate required parameters
+        if (!channel) {
+          return new Response(
+            JSON.stringify({ error: "Missing channel parameter" }),
+            { status: 400, headers: { "Content-Type": "application/json" } },
+          );
+        }
+
+        // Validate recipient based on channel
+        if (channel === "sms" && !phoneNumber) {
+          return new Response(
+            JSON.stringify({ error: "Missing phoneNumber for SMS channel" }),
+            { status: 400 },
+          );
+        }
+
+        if (channel === "email" && !emailAddress) {
+          return new Response(
+            JSON.stringify({ error: "Missing emailAddress for Email channel" }),
+            { status: 400 },
+          );
+        }
+
+        // Build workflow
+        const workflow = [{
+          channel: channel.toLowerCase(),
+          to: channel === "sms" ? phoneNumber : emailAddress,
+        }];
+
         const response = await fetch("https://api.nexmo.com/v2/verify/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Basic ${auth}`,
+            "Authorization": `Basic ${auth}`,
           },
           body: JSON.stringify({
             brand: "Team SAN-e",
-            workflow: [
-              {
-                channel: "sms",
-                to: phoneNumber,
-              },
-            ],
+            workflow,
           }),
         });
 
