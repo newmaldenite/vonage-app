@@ -1,8 +1,10 @@
+"use server";
+
 import { createClient } from "@/utils/supabase/server";
 import { callVonageAPI } from "./vonage";
 import { AuthResponse, SignUpPayload } from "./types";
 
-export async function createNewUser(
+export async function signUpAction(
   payload: SignUpPayload,
 ): Promise<AuthResponse> {
   const supabase = await createClient();
@@ -13,7 +15,7 @@ export async function createNewUser(
       data: {
         email_verified: false,
         phone_verified: false,
-        phone_number: payload.phone,
+        phone_number: payload.phone_number,
       },
     },
   });
