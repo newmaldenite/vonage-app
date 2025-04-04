@@ -1,4 +1,3 @@
-
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/lib/auth/signup";
-
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
@@ -46,42 +44,43 @@ export default async function Signup(props: {
             minLength={6}
             required
           />
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input 
-              name="phone_number" 
-              placeholder="+1234567890" 
-              required 
-              type="tel"
-            />
+          <Label htmlFor="phone_number">Phone Number</Label>
+          <Input
+            name="phone_number"
+            placeholder="+1234567890"
+            required
+            type="tel"
+          />
           <SubmitButton
-                formAction={async (formData: FormData) => {
-                  "use server";
-                  try {
-                    const email = formData.get("email") as string;
-                    const password = formData.get("password") as string;
-                    const phone_number = formData.get("phone_number") as string;
-              
-                    const { error } = await signUpAction({ 
-                      email, 
-                      password,
-                      phone_number 
-                    });
-                    
-                    if (error) {
-                      throw new Error(error.message || 'Signup failed');
-                    }
-              
-                  } catch (error) {
-                    console.error(error);
-                    redirect(`/sign-up?message=${encodeURIComponent(
-                      (error as Error).message || 'An unexpected error occurred'
-                    )}`);
-                  }
+            formAction={async (formData: FormData) => {
+              "use server";
+              try {
+                const email = formData.get("email") as string;
+                const password = formData.get("password") as string;
+                const phone_number = formData.get("phone_number") as string;
 
-                  redirect('/vdashboard');
-                }}
-                pendingText="Signing up..."
-              >
+                const { error } = await signUpAction({
+                  email,
+                  password,
+                  phone_number,
+                });
+
+                if (error) {
+                  throw new Error(error.message || "Signup failed");
+                }
+              } catch (error) {
+                console.error(error);
+                redirect(
+                  `/sign-up?message=${encodeURIComponent(
+                    (error as Error).message || "An unexpected error occurred",
+                  )}`,
+                );
+              }
+
+              redirect("/vdashboard");
+            }}
+            pendingText="Signing up..."
+          >
             Sign up
           </SubmitButton>
           <FormMessage message={searchParams} />

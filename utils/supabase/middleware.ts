@@ -3,8 +3,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(request: NextRequest) {
   const supabase = await createClient();
-  const { data: { session: initialSession } } = await supabase.auth
-    .getSession();
+  const {
+    data: { session: initialSession },
+  } = await supabase.auth.getSession();
 
   // Skip refresh if no session exists
   if (!initialSession) return NextResponse.next();

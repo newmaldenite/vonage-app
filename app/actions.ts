@@ -81,11 +81,7 @@ export const signOutAction = async () => {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "Failed to sign out",
-    );
+    return encodedRedirect("error", "/sign-in", "Failed to sign out");
   }
 
   return redirect("/sign-in");

@@ -61,9 +61,8 @@ async function handleSecondFactor(
   const deviceType = await detectDeviceType();
   const channel = deviceType === "mobile" ? "sms" : "email"; // Map to valid channels
 
-  const recipient = channel === "sms"
-    ? await getRegisteredPhone(user.id)
-    : user.email!;
+  const recipient =
+    channel === "sms" ? await getRegisteredPhone(user.id) : user.email!;
 
   const response = await callVonageAPI({
     action: "start",
