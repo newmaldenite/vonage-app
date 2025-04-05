@@ -11,7 +11,6 @@ import { initiatePasswordReset, updateUserPassword } from "@/lib/auth/password";
 // Re-export core authentication actions
 export { coreSignIn as signInAction };
 
-
 // Password management actions
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();

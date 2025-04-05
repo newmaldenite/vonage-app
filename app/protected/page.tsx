@@ -12,18 +12,18 @@ export default async function ProtectedPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log({data: {user}})
+  console.log({ data: { user } });
 
   if (error) {
     console.error("Error fetching user:", error);
   }
-  
+
   if (!user) {
     return redirect("/sign-in");
   }
 
   // If user is authenticated, redirect to dashboard
-  return redirect('/dashboard');
+  return redirect("/dashboard");
 
   // // The code below will never run because of the redirect above
   return (
