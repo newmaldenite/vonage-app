@@ -1,3 +1,5 @@
+// app/actions.ts
+
 "use server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -7,8 +9,8 @@ import { signInAction as coreSignIn } from "@/lib/auth/signin";
 import { initiatePasswordReset, updateUserPassword } from "@/lib/auth/password";
 
 // Re-export core authentication actions
-
 export { coreSignIn as signInAction };
+
 
 // Password management actions
 export const forgotPasswordAction = async (formData: FormData) => {

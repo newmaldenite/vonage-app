@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/lib/auth/signup";
 
+
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
@@ -78,6 +79,7 @@ export default async function Signup(props: {
               }
 
               redirect("/vdashboard");
+
             }}
             pendingText="Signing up..."
           >
