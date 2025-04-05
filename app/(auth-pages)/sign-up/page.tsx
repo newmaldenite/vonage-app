@@ -7,7 +7,6 @@ import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
 import { createNewUser } from "@/lib/auth/signup";
 
-
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
@@ -46,23 +45,23 @@ export default async function Signup(props: {
             required
           />
           <SubmitButton
-                formAction={async (formData: FormData) => {
-                  const email = formData.get("email") as string;
-                  const password = formData.get("password") as string;
-              
-                  // Handle response without returning it
-                  const { error } = await createNewUser({ email, password });
-                  
-                  if (error) {
-                    // Handle error (e.g., set error message)
-                    console.error(error);
-                  } else {
-                    // Redirect on success
-                    window.location.href = "/dashboard"; // Or use Next.js router
-                  }
-                }}
-                pendingText="Signing up..."
-              >
+            formAction={async (formData: FormData) => {
+              const email = formData.get("email") as string;
+              const password = formData.get("password") as string;
+
+              // Handle response without returning it
+              const { error } = await createNewUser({ email, password });
+
+              if (error) {
+                // Handle error (e.g., set error message)
+                console.error(error);
+              } else {
+                // Redirect on success
+                window.location.href = "/dashboard"; // Or use Next.js router
+              }
+            }}
+            pendingText="Signing up..."
+          >
             Sign up
           </SubmitButton>
           <FormMessage message={searchParams} />

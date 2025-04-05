@@ -10,19 +10,19 @@ export interface User extends SupabaseUser {
 
 export type AuthResponse =
   | {
-    data: {
-      user: User | null;
-      session: Session | null;
-    };
-    error: null;
-  }
+      data: {
+        user: User | null;
+        session: Session | null;
+      };
+      error: null;
+    }
   | {
-    data: {
-      user: null;
-      session: null;
+      data: {
+        user: null;
+        session: null;
+      };
+      error: AuthError;
     };
-    error: AuthError;
-  };
 
 export type DeviceType = "mobile" | "desktop";
 

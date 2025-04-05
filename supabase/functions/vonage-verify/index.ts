@@ -34,16 +34,18 @@ Deno.serve(async (req: Request) => {
         }
 
         // Build workflow
-        const workflow = [{
-          channel: channel.toLowerCase(),
-          to: channel === "sms" ? phoneNumber : emailAddress,
-        }];
+        const workflow = [
+          {
+            channel: channel.toLowerCase(),
+            to: channel === "sms" ? phoneNumber : emailAddress,
+          },
+        ];
 
         const response = await fetch("https://api.nexmo.com/v2/verify/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           },
           body: JSON.stringify({
             brand: "Team SAN-e",
