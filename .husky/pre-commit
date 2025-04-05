@@ -1,21 +1,62 @@
+#!/bin/sh
+# Husky pre-commit hook file: .husky/pre-commit
+
+# Define colors for better visual feedback
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
-NC='\033[0m'
+NC='\033[0m' # No Color
 
+echo "${BLUE}Running pre-commit checks...${NC}"
 
 # Format with Prettier
+echo "${YELLOW}Running Prettier...${NC}"
 npx prettier --write .
+if [ $? -ne 0 ]; then
+  echo "${RED}Prettier formatting failed!${NC}"
+  exit 1
+fi
+echo "${GREEN}✓ Prettier formatting completed${NC}"
 
 # Run linting
+echo "${YELLOW}Running ESLint...${NC}"
 npm run lint
+if [ $? -ne 0 ]; then
+  echo "${RED}Linting failed!${NC}"
+  exit 1
+fi
+echo "${GREEN}✓ ESLint checks passed${NC}"
 
 # Type checking
+echo "${YELLOW}Running TypeScript checks...${NC}"
 npm run type-check
+if [ $? -ne 0 ]; then
+  echo "${RED}TypeScript type checking failed!${NC}"
+  exit 1
+fi
+echo "${GREEN}✓ TypeScript checks passed${NC}"
 
-# Run tests
+# Run tests (currently commented out)
+# echo "${YELLOW}Running tests...${NC}"
 # npm test
+# if [ $? -ne 0 ]; then
+#   echo "${RED}Tests failed!${NC}"
+#   exit 1
+# fi
+# echo "${GREEN}✓ Tests passed${NC}"
 
-# Generate Supabase types
+# Generate Supabase types (currently commented out)
+# echo "${YELLOW}Generating Supabase types...${NC}"
 # npm run supabase:types
+# if [ $? -ne 0 ]; then
+#   echo "${RED}Supabase type generation failed!${NC}"
+#   exit 1
+# fi
+# echo "${GREEN}✓ Supabase types generated${NC}"
+
+# Final success message
+echo "\n${GREEN}✨ All pre-commit checks passed successfully! ✨${NC}"
+echo "${GREEN}Your code meets all quality standards and is ready to commit.${NC}\n"
+
+exit 0
