@@ -28,12 +28,10 @@ export async function signUpAction(
     };
   }
 
-  await supabase
-    .from("profiles")
-    .upsert({
-      id: data.user?.id,
-      phone_number: payload.phone_number,
-    });
+  await supabase.from("profiles").upsert({
+    id: data.user?.id,
+    phone_number: payload.phone_number,
+  });
 
   return {
     data: {
