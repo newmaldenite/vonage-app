@@ -1,11 +1,12 @@
-import { signUpAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
-import { createNewUser } from "@/lib/auth/signup";
+import { signUpAction } from "@/lib/auth/signup";
+
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
@@ -44,21 +45,41 @@ export default async function Signup(props: {
             minLength={6}
             required
           />
+          <Label htmlFor="phone_number">Phone Number</Label>
+          <Input
+            name="phone_number"
+            placeholder="+1234567890"
+            required
+            type="tel"
+          />
           <SubmitButton
             formAction={async (formData: FormData) => {
-              const email = formData.get("email") as string;
-              const password = formData.get("password") as string;
+              "use server";
+              try {
+                const email = formData.get("email") as string;
+                const password = formData.get("password") as string;
+                const phone_number = formData.get("phone_number") as string;
 
-              // Handle response without returning it
-              const { error } = await createNewUser({ email, password });
+                const { error } = await signUpAction({
+                  email,
+                  password,
+                  phone_number,
+                });
 
-              if (error) {
-                // Handle error (e.g., set error message)
+                if (error) {
+                  throw new Error(error.message || "Signup failed");
+                }
+              } catch (error) {
                 console.error(error);
-              } else {
-                // Redirect on success
-                window.location.href = "/dashboard"; // Or use Next.js router
+                redirect(
+                  `/sign-up?message=${encodeURIComponent(
+                    (error as Error).message || "An unexpected error occurred",
+                  )}`,
+                );
               }
+
+              redirect("/vdashboard");
+
             }}
             pendingText="Signing up..."
           >

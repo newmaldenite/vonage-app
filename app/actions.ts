@@ -5,16 +5,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
-import {
-  createNewUser as coreSignUp,
-  initiateDualVerification as coreVerifySignUp,
-} from "@/lib/auth/signup";
-
+import { signInAction as coreSignIn } from "@/lib/auth/signin";
 import { initiatePasswordReset, updateUserPassword } from "@/lib/auth/password";
 
 // Re-export core authentication actions
-export { coreSignUp as signUpAction };
-export { coreVerifySignUp as verifySignUp };
+export { coreSignIn as signInAction };
+
 
 // Password management actions
 export const forgotPasswordAction = async (formData: FormData) => {

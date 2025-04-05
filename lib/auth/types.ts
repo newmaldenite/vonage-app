@@ -37,7 +37,7 @@ export interface VerificationAttempt {
 export interface SignUpPayload {
   email: string;
   password: string;
-  phone?: string;
+  phone_number: string;
 }
 
 export interface VerificationPayload {
