@@ -29,12 +29,10 @@ export async function signUpAction(
     };
   }
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .upsert({
-      id: data.user?.id,
-      phone_number: payload.phone_number,
-    });
+  const { error: profileError } = await supabase.from("profiles").upsert({
+    id: data.user?.id,
+    phone_number: payload.phone_number,
+  });
 
   if (profileError) {
     return {
@@ -100,8 +98,5 @@ export async function updateVerificationStatus(
   updates: { email_verified?: boolean; phone_verified?: boolean },
 ) {
   const supabase = await createClient();
-  return supabase
-    .from("profiles")
-    .update(updates)
-    .eq("id", userId);
+  return supabase.from("profiles").update(updates).eq("id", userId);
 }

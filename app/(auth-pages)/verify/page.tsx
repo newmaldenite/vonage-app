@@ -1,90 +1,100 @@
-'use client';
-import { useState } from 'react';
-import { VonageRequest, callVonageAPI } from '@/lib/auth/vonage';
-import { useRouter, useSearchParams } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import { VonageRequest, callVonageAPI } from "@/lib/auth/vonage";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function VerifyPage() {
-  const [emailCode, setEmailCode] = useState('');
-  const [phoneCode, setPhoneCode] = useState('');
-  const [error, setError] = useState('');
+// Wrap the main component with Suspense
+function VerifyPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading verification session...</div>}>
+      <VerifyPage />
+    </Suspense>
+  );
+}
+
+function VerifyPage() {
+  const [emailCode, setEmailCode] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Get request IDs from URL parameters
-  const emailRequestId = searchParams.get('email');
-  const smsRequestId = searchParams.get('sms');
+  const emailRequestId = searchParams.get("email");
+  const smsRequestId = searchParams.get("sms");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('Initial verification state:', {
+
+    console.log("Initial verification state:", {
       emailRequestId,
       smsRequestId,
       emailCode,
-      phoneCode
+      phoneCode,
     });
 
     if (!emailRequestId || !smsRequestId) {
-      console.error('Missing request IDs:', { emailRequestId, smsRequestId });
-      setError('Missing verification session');
+      console.error("Missing request IDs:", { emailRequestId, smsRequestId });
+      setError("Missing verification session");
       return;
     }
-  
+
     try {
-      console.log('Starting verification checks...');
-      const emailPayload: VonageRequest  = {
-        action: 'check',
-        channel: 'email',
+      console.log("Starting verification checks...");
+      const emailPayload: VonageRequest = {
+        action: "check",
+        channel: "email",
         request_id: emailRequestId,
-        code: emailCode
+        code: emailCode,
       };
-      const smsPayload: VonageRequest  = {
-        action: 'check',
-        channel: 'sms', 
+      const smsPayload: VonageRequest = {
+        action: "check",
+        channel: "sms",
         request_id: smsRequestId,
-        code: phoneCode
+        code: phoneCode,
       };
 
-      console.log('Sending verification payloads:', {
+      console.log("Sending verification payloads:", {
         emailPayload,
-        smsPayload
+        smsPayload,
       });
 
       const [emailRes, smsRes] = await Promise.all([
-        callVonageAPI(emailPayload).catch(e => {
-          console.error('Email verification error:', e);
+        callVonageAPI(emailPayload).catch((e) => {
+          console.error("Email verification error:", e);
           throw e;
         }),
-        callVonageAPI(smsPayload).catch(e => {
-          console.error('SMS verification error:', e);
+        callVonageAPI(smsPayload).catch((e) => {
+          console.error("SMS verification error:", e);
           throw e;
-        })
+        }),
       ]);
 
-      console.log('Verification responses:', {
+      console.log("Verification responses:", {
         emailResponse: emailRes,
-        smsResponse: smsRes
+        smsResponse: smsRes,
       });
 
-      if (emailRes.status === 'completed' && smsRes.status === 'completed') {
-        console.log('Dual verification successful');
+      if (emailRes.status === "completed" && smsRes.status === "completed") {
+        console.log("Dual verification successful");
         setSuccess(true);
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
-        console.warn('Verification failed:', {
+        console.warn("Verification failed:", {
           emailStatus: emailRes.status,
-          smsStatus: smsRes.status
+          smsStatus: smsRes.status,
         });
-        setError('Invalid codes - please try again');
+        setError("Invalid codes - please try again");
       }
     } catch (err) {
-      console.error('Verification process failed:', err);
-      setError(err instanceof Error ? err.message : 'Verification failed');
-      
+      console.error("Verification process failed:", err);
+      setError(err instanceof Error ? err.message : "Verification failed");
+
       // Log additional error details if available
-      if (err instanceof Error && 'cause' in err) {
-        console.error('Underlying error details:', err.cause);
+      if (err instanceof Error && "cause" in err) {
+        console.error("Underlying error details:", err.cause);
       }
     }
   };
@@ -97,23 +107,23 @@ export default function VerifyPage() {
         <p className="text-green-500">Success! Redirecting...</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Email code"
             value={emailCode}
             onChange={(e) => setEmailCode(e.target.value)}
             className="w-full p-2 border rounded"
             required
           />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="SMS code"
             value={phoneCode}
             onChange={(e) => setPhoneCode(e.target.value)}
             className="w-full p-2 border rounded"
             required
           />
-          <button 
+          <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"
           >
@@ -124,3 +134,5 @@ export default function VerifyPage() {
     </div>
   );
 }
+
+export default VerifyPageWrapper;

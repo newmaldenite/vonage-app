@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/lib/auth/signup";
 
-
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
@@ -55,34 +54,35 @@ export default async function Signup(props: {
           <SubmitButton
             formAction={async (formData: FormData) => {
               "use server";
-              
-    // Process form data first
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const phone_number = formData.get("phone_number") as string;
 
-    // Handle signup attempt
-    let result;
-    try {
-      result = await signUpAction({ email, password, phone_number });
-      
-      if (result.error) {
-        throw result.error;
-      }
+              // Process form data first
+              const email = formData.get("email") as string;
+              const password = formData.get("password") as string;
+              const phone_number = formData.get("phone_number") as string;
 
-      if (!result.data?.requestIds) {
-        throw new Error("Verification request IDs not generated");
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Signup failed";
-      redirect(`/sign-up?message=${encodeURIComponent(message)}`);
-    }
+              // Handle signup attempt
+              let result;
+              try {
+                result = await signUpAction({ email, password, phone_number });
 
-    // Only reachable if no errors were thrown
-    redirect(
-      `/verify?email=${encodeURIComponent(result.data.requestIds.email)}&sms=${encodeURIComponent(result.data.requestIds.sms)}`
-    );
-  }}
+                if (result.error) {
+                  throw result.error;
+                }
+
+                if (!result.data?.requestIds) {
+                  throw new Error("Verification request IDs not generated");
+                }
+              } catch (error) {
+                const message =
+                  error instanceof Error ? error.message : "Signup failed";
+                redirect(`/sign-up?message=${encodeURIComponent(message)}`);
+              }
+
+              // Only reachable if no errors were thrown
+              redirect(
+                `/verify?email=${encodeURIComponent(result.data.requestIds.email)}&sms=${encodeURIComponent(result.data.requestIds.sms)}`,
+              );
+            }}
             pendingText="Signing up..."
           >
             Sign up
