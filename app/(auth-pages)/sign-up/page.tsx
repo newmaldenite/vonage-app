@@ -3,7 +3,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/lib/auth/signup";
@@ -53,57 +53,63 @@ export default async function Signup(props: {
             type="tel"
           />
           <SubmitButton
-  formAction={async (formData: FormData) => {
-    "use server";
+            formAction={async (formData: FormData) => {
+              "use server";
 
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const phone_number = formData.get("phone_number") as string;
+              const email = formData.get("email") as string;
+              const password = formData.get("password") as string;
+              const phone_number = formData.get("phone_number") as string;
 
-    try {
-      const result = await signUpAction({ email, password, phone_number });
+              try {
+                const result = await signUpAction({
+                  email,
+                  password,
+                  phone_number,
+                });
 
-      if (result.error) {
-        throw result.error;
-      }
+                if (result.error) {
+                  throw result.error;
+                }
 
-      if (!result.data?.requestIds) {
-        throw new Error("Verification request IDs not generated");
-      }
+                if (!result.data?.requestIds) {
+                  throw new Error("Verification request IDs not generated");
+                }
 
-      // Get cookies instance with await
-      const cookieStore = await cookies();
+                // Get cookies instance with await
+                const cookieStore = await cookies();
 
-      // Set cookies securely
-      cookieStore.set('vrfy_email', result.data.requestIds.email, {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'strict',
-        path: '/verify',
-        maxAge: 600
-      });
-      
-      cookieStore.set('vrfy_sms', result.data.requestIds.sms, {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'strict',
-        path: '/verify',
-        maxAge: 600
-      });
+                // Set cookies securely
+                cookieStore.set("vrfy_email", result.data.requestIds.email, {
+                  secure: process.env.NODE_ENV === "production",
+                  httpOnly: true,
+                  sameSite: "strict",
+                  path: "/", // Changed from "/verify" to "/"
+                  maxAge: 600,
+                });
+                
+                cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
+                  secure: process.env.NODE_ENV === "production",
+                  httpOnly: true,
+                  sameSite: "strict",
+                  path: "/", // Changed from "/verify" to "/"
+                  maxAge: 600,
+                });
+                console.log("Cookies set successfully");
+                
+              } catch (error) {
+                const message =
+                  error instanceof Error
+                    ? error.message
+                    : "An unexpected error occurred";
+                redirect(`/sign-up?message=${encodeURIComponent(message)}`);
+              }
 
-    } catch (error) {
-      const message = error instanceof Error 
-        ? error.message 
-        : "An unexpected error occurred";
-      redirect(`/sign-up?message=${encodeURIComponent(message)}`);
-    }
-
-    redirect('/verify');
-  }}
-  pendingText="Signing up..."
->
-  Sign up
-</SubmitButton>
+              redirect("/verify");
+            }}
+            pendingText="Signing up..."
+          >
+            Sign up
+          </SubmitButton>
           <FormMessage message={searchParams} />
         </div>
       </form>
