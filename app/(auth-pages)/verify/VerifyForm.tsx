@@ -8,9 +8,9 @@ interface VerifyFormProps {
   smsRequestId: string;
 }
 
-export default function VerifyForm({ 
+export default function VerifyForm({
   emailRequestId,
-  smsRequestId 
+  smsRequestId,
 }: VerifyFormProps) {
   const [emailCode, setEmailCode] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
@@ -20,7 +20,7 @@ export default function VerifyForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const [emailRes, smsRes] = await Promise.all([
         callVonageAPI({
@@ -34,13 +34,13 @@ export default function VerifyForm({
           channel: "sms",
           request_id: smsRequestId,
           code: phoneCode,
-        })
+        }),
       ]);
 
       if (emailRes.status === "completed" && smsRes.status === "completed") {
-        document.cookie = 'vrfy_email=; path=/verify; max-age=0';
-        document.cookie = 'vrfy_sms=; path=/verify; max-age=0';
-        
+        document.cookie = "vrfy_email=; path=/; max-age=0";
+        document.cookie = "vrfy_sms=; path=/; max-age=0";
+
         setSuccess(true);
         router.push("/dashboard");
       } else {

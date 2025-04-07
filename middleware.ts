@@ -43,7 +43,20 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getSession();
   const path = request.nextUrl.pathname;
 
-  // Redirect logic based on auth state
+  if (session) {
+    const needsVerification = request.cookies.has("vrfy_email") ||
+      request.cookies.has("vrfy_sms");
+
+    // Redirect to verification if accessing protected routes
+    if (
+      needsVerification &&
+      (path.startsWith("/dashboard") || path === "/protected")
+    ) {
+      return NextResponse.redirect(new URL("/verify", request.url));
+    }
+  }
+
+  // Existing auth redirect logic
   if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -55,7 +68,14 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Add the paths you want the middleware to run on
+// Update matcher to include verify page
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/protected", "/sign-in", "/sign-up"],
+  matcher: [
+    "/",
+    "/dashboard/:path*",
+    "/protected",
+    "/sign-in",
+    "/sign-up",
+    "/verify",
+  ],
 };
