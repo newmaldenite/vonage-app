@@ -1,6 +1,7 @@
 import { callVonageAPI } from "./vonage";
 import { VerificationAttempt, VerificationPayload } from "./types";
 import { getRecentVerificationAttempts } from "./supabase";
+import { createClient } from "@/utils/supabase/server";
 
 export async function verifySignUpCodes(payload: VerificationPayload) {
   const { emailCode, smsCode, userId } = payload;
@@ -28,4 +29,15 @@ async function getVerificationRequestId(
   const { data } = await getRecentVerificationAttempts(userId);
   return data?.find((a: VerificationAttempt) => a.channel === channel)
     ?.request_id;
+}
+
+// lib/auth/verification.ts
+export async function checkVerificationStatus(userId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("email_verified, phone_verified")
+    .eq("id", userId)
+    .single();
+  return data;
 }

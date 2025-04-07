@@ -13,6 +13,11 @@ export type AuthResponse =
       data: {
         user: User | null;
         session: Session | null;
+        requestIds?: {
+          // Move inside data object
+          email: string;
+          sms: string;
+        };
       };
       error: null;
     }
