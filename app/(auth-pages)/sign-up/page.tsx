@@ -3,6 +3,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/lib/auth/signup";
@@ -52,41 +53,57 @@ export default async function Signup(props: {
             type="tel"
           />
           <SubmitButton
-            formAction={async (formData: FormData) => {
-              "use server";
+  formAction={async (formData: FormData) => {
+    "use server";
 
-              // Process form data first
-              const email = formData.get("email") as string;
-              const password = formData.get("password") as string;
-              const phone_number = formData.get("phone_number") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const phone_number = formData.get("phone_number") as string;
 
-              // Handle signup attempt
-              let result;
-              try {
-                result = await signUpAction({ email, password, phone_number });
+    try {
+      const result = await signUpAction({ email, password, phone_number });
 
-                if (result.error) {
-                  throw result.error;
-                }
+      if (result.error) {
+        throw result.error;
+      }
 
-                if (!result.data?.requestIds) {
-                  throw new Error("Verification request IDs not generated");
-                }
-              } catch (error) {
-                const message =
-                  error instanceof Error ? error.message : "Signup failed";
-                redirect(`/sign-up?message=${encodeURIComponent(message)}`);
-              }
+      if (!result.data?.requestIds) {
+        throw new Error("Verification request IDs not generated");
+      }
 
-              // Only reachable if no errors were thrown
-              redirect(
-                `/verify?email=${encodeURIComponent(result.data.requestIds.email)}&sms=${encodeURIComponent(result.data.requestIds.sms)}`,
-              );
-            }}
-            pendingText="Signing up..."
-          >
-            Sign up
-          </SubmitButton>
+      // Get cookies instance with await
+      const cookieStore = await cookies();
+
+      // Set cookies securely
+      cookieStore.set('vrfy_email', result.data.requestIds.email, {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: 'strict',
+        path: '/verify',
+        maxAge: 600
+      });
+      
+      cookieStore.set('vrfy_sms', result.data.requestIds.sms, {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: 'strict',
+        path: '/verify',
+        maxAge: 600
+      });
+
+    } catch (error) {
+      const message = error instanceof Error 
+        ? error.message 
+        : "An unexpected error occurred";
+      redirect(`/sign-up?message=${encodeURIComponent(message)}`);
+    }
+
+    redirect('/verify');
+  }}
+  pendingText="Signing up..."
+>
+  Sign up
+</SubmitButton>
           <FormMessage message={searchParams} />
         </div>
       </form>
