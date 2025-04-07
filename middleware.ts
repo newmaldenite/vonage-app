@@ -1,22 +1,61 @@
-// app/middleware.ts
-
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name, value, options) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name, options) {
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+            maxAge: 0,
+          });
+        },
+      },
+    },
+  );
+
+  // Check auth state
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const path = request.nextUrl.pathname;
+
+  // Redirect logic based on auth state
+  if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (!session && (path.startsWith("/dashboard") || path === "/protected")) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+
+  return response;
 }
 
+// Add the paths you want the middleware to run on
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - /sign-in (public route)
-     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-     */
-    "/((?!_next/static|_next/image|favicon.ico|sign-in|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/", "/dashboard/:path*", "/protected", "/sign-in", "/sign-up"],
 };

@@ -1,18 +1,31 @@
+// app/protected/page.tsx
+
 import { createClient } from "@/utils/supabase/server";
+import { error } from "console";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
+  // Get the current user
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  console.log({ data: { user } });
+
+  if (error) {
+    console.error("Error fetching user:", error);
+  }
 
   if (!user) {
     return redirect("/sign-in");
   }
 
+  // If user is authenticated, redirect to dashboard
+  return redirect("/dashboard");
+
+  // // The code below will never run because of the redirect above
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
       <div className="w-full">

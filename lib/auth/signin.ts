@@ -38,7 +38,7 @@ export const signInAction = async (formData: FormData) => {
     if (!requires2FA) {
       console.log("2FA not required, recording trusted device...");
       await recordTrustedDevice(data.user);
-      console.log("Redirecting to /protected...");
+      console.log("Redirecting to /dashboard ...");
       redirect("/dashboard");
     }
 
