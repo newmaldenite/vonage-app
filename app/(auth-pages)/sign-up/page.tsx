@@ -86,7 +86,7 @@ export default async function Signup(props: {
                   path: "/", // Changed from "/verify" to "/"
                   maxAge: 600,
                 });
-                
+
                 cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
                   secure: process.env.NODE_ENV === "production",
                   httpOnly: true,
@@ -95,7 +95,6 @@ export default async function Signup(props: {
                   maxAge: 600,
                 });
                 console.log("Cookies set successfully");
-                
               } catch (error) {
                 const message =
                   error instanceof Error

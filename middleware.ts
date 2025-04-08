@@ -44,8 +44,8 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   if (session) {
-    const needsVerification = request.cookies.has("vrfy_email") ||
-      request.cookies.has("vrfy_sms");
+    const needsVerification =
+      request.cookies.has("vrfy_email") || request.cookies.has("vrfy_sms");
 
     // Redirect to verification if accessing protected routes
     if (
