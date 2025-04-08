@@ -37,6 +37,12 @@ export async function signUpAction(
       payload.phone_number,
     );
 
+    console.log("Verification initiated:", {
+      emailRequestId,
+      smsRequestId,
+      ttl: 900,
+    });
+
     return {
       data: {
         user: data.user,
@@ -81,8 +87,9 @@ async function initiateDualVerification(
 
     return [emailRes.request_id, smsRes.request_id];
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Verification initiation failed";
+    const errorMessage = error instanceof Error
+      ? error.message
+      : "Verification initiation failed";
     throw new Error(errorMessage);
   }
 }

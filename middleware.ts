@@ -41,29 +41,47 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getSession();
   const path = request.nextUrl.pathname;
 
-  // New: Check for verification completion
+  // Check verification status
   const isVerified =
     request.cookies.get("verification_complete")?.value === "true";
+  const hasEmailRequestId = request.cookies.has("vrfy_email");
+  const hasSmsRequestId = request.cookies.has("vrfy_sms");
 
+  // Redirect logic for verification
   if (session) {
-    // Modified verification check
-    const needsVerification =
-      !isVerified &&
-      (request.cookies.has("vrfy_email") || request.cookies.has("vrfy_sms"));
+    // Force verification before dashboard access
+    if (!isVerified && (hasEmailRequestId || hasSmsRequestId)) {
+      if (path.startsWith("/dashboard") || path === "/protected") {
+        return NextResponse.redirect(new URL("/verify", request.url));
+      }
+    }
 
-    if (needsVerification && path.startsWith("/dashboard")) {
-      return NextResponse.redirect(new URL("/verify", request.url));
+    // Clear verification cookies after completion
+    if (isVerified && (hasEmailRequestId || hasSmsRequestId)) {
+      response.cookies.delete("vrfy_email");
+      response.cookies.delete("vrfy_sms");
     }
   }
 
-  // Existing auth logic
+  // Existing auth redirects
   if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!session && path.startsWith("/dashboard")) {
+  if (!session && (path.startsWith("/dashboard") || path === "/protected")) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   return response;
 }
+
+export const config = {
+  matcher: [
+    "/",
+    "/dashboard/:path*",
+    "/protected",
+    "/sign-in",
+    "/sign-up",
+    "/verify",
+  ],
+};
