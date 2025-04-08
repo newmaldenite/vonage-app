@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 
-// @ts-expect-error
 import { sendAdminMagicLink } from "@/lib/auth/admin";
 
 export function AdminLoginForm() {
