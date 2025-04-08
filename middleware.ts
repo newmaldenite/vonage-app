@@ -36,7 +36,9 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const path = request.nextUrl.pathname;
 
   // New: Check for verification completion
@@ -45,10 +47,9 @@ export async function middleware(request: NextRequest) {
 
   if (session) {
     // Modified verification check
-    const needsVerification = !isVerified && (
-      request.cookies.has("vrfy_email") ||
-      request.cookies.has("vrfy_sms")
-    );
+    const needsVerification =
+      !isVerified &&
+      (request.cookies.has("vrfy_email") || request.cookies.has("vrfy_sms"));
 
     if (needsVerification && path.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/verify", request.url));

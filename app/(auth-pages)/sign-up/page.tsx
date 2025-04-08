@@ -3,7 +3,7 @@ import { Message } from "@/lib/auth/types";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-export const dynamic = 'force-dynamic'; // Add this line
+export const dynamic = "force-dynamic"; // Add this line
 
 export default async function SignupPage({
   searchParams: searchParamsPromise,
@@ -25,8 +25,8 @@ export default async function SignupPage({
 
   // Construct message parameters
   const messageParams: Message = {
-    type: searchParams.success ? 'success' : 'error',
-    content: searchParams.success || searchParams.message || ''
+    type: searchParams.success ? "success" : "error",
+    content: searchParams.success || searchParams.message || "",
   };
 
   return <SignUpForm searchParams={messageParams} />;

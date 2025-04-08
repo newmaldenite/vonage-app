@@ -23,10 +23,10 @@ export default function VerifyForm({
       // Clear verification cookies
       document.cookie = "vrfy_email=; path=/verify; max-age=0";
       document.cookie = "vrfy_sms=; path=/verify; max-age=0";
-      
+
       // Set verification complete marker
       document.cookie = "verification_complete=true; path=/; max-age=3600";
-      
+
       // Force full page reload
       window.location.href = "/dashboard";
     }

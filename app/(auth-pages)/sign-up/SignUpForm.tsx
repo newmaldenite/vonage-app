@@ -8,10 +8,10 @@ import { useActionState, useEffect } from "react";
 import { handleSignUp } from "@/app/actions";
 import { Message } from "@/lib/auth/types";
 
-export default function SignUpForm({ 
-  searchParams 
-}: { 
-  searchParams: Message 
+export default function SignUpForm({
+  searchParams,
+}: {
+  searchParams: Message;
 }) {
   const [state, formAction] = useActionState(handleSignUp, undefined);
 
@@ -30,7 +30,10 @@ export default function SignUpForm({
         </div>
       )}
 
-      <form action={formAction} className="flex flex-col min-w-64 max-w-64 mx-auto">
+      <form
+        action={formAction}
+        className="flex flex-col min-w-64 max-w-64 mx-auto"
+      >
         <h1 className="text-2xl font-medium">Sign up</h1>
         <p className="text-sm text text-foreground">
           Already have an account?{" "}
@@ -56,11 +59,7 @@ export default function SignUpForm({
             required
             type="tel"
           />
-          <SubmitButton
-            pendingText="Signing up..."
-          >
-            Sign up
-          </SubmitButton>
+          <SubmitButton pendingText="Signing up...">Sign up</SubmitButton>
           {state?.error && (
             <p className="text-red-500 text-sm mt-2">{state.error}</p>
           )}
