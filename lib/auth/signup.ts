@@ -1,5 +1,4 @@
 "use server";
-
 import { createClient } from "@/utils/supabase/server";
 import { callVonageAPI } from "./vonage";
 import { AuthResponse, SignUpPayload } from "./types";
@@ -10,39 +9,30 @@ export async function signUpAction(
 ): Promise<AuthResponse> {
   const supabase = await createClient();
 
-  // Create auth user
-  const { data, error } = await supabase.auth.signUp({
-    email: payload.email,
-    password: payload.password,
-    options: {
-      data: {
-        // Store in user_metadata (not auth.users.phone)
-        phone_number: payload.phone_number,
-      },
-    },
-  });
-
-  if (error) {
-    return {
-      data: { user: null, session: null },
-      error: error,
-    };
-  }
-
-  const { error: profileError } = await supabase.from("profiles").upsert({
-    id: data.user?.id,
-    phone_number: payload.phone_number,
-  });
-
-  if (profileError) {
-    return {
-      data: { user: null, session: null },
-      error: new AuthError("Profile creation failed: " + profileError.message),
-    };
-  }
-
   try {
-    const [emailRes, smsRes] = await initiateDualVerification(
+    // Create auth user
+    const { data, error } = await supabase.auth.signUp({
+      email: payload.email,
+      password: payload.password,
+      options: {
+        data: {
+          phone_number: payload.phone_number,
+        },
+      },
+    });
+
+    if (error) throw error;
+
+    // Create user profile
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: data.user?.id,
+      phone_number: payload.phone_number,
+    });
+
+    if (profileError) throw profileError;
+
+    // Initiate Vonage verification
+    const [emailRequestId, smsRequestId] = await initiateDualVerification(
       payload.email,
       payload.phone_number,
     );
@@ -52,51 +42,48 @@ export async function signUpAction(
         user: data.user,
         session: data.session,
         requestIds: {
-          email: emailRes.request_id,
-          sms: smsRes.request_id,
+          email: emailRequestId,
+          sms: smsRequestId,
         },
       },
       error: null,
     };
-  } catch (err) {
-    console.error("Verification initiation failed:", err);
-
+  } catch (error) {
+    console.error("Signup error:", error);
     return {
       data: {
         user: null,
         session: null,
       },
       error: new AuthError(
-        "Verification initiation failed: " +
-          (err instanceof Error ? err.message : "Unknown error"),
+        error instanceof Error ? error.message : "Signup failed",
       ),
     };
   }
 }
 
-export async function initiateDualVerification(
+async function initiateDualVerification(
   email: string,
   phone_number: string,
-) {
-  return Promise.all([
-    callVonageAPI({
+): Promise<[string, string]> {
+  try {
+    const emailRes = await callVonageAPI({
       action: "start",
       channel: "email",
       emailAddress: email,
-    }),
-    callVonageAPI({
+    });
+
+    const smsRes = await callVonageAPI({
       action: "start",
       channel: "sms",
       phoneNumber: phone_number,
-    }),
-  ]);
-}
+    });
 
-// Add verification status update function
-export async function updateVerificationStatus(
-  userId: string,
-  updates: { email_verified?: boolean; phone_verified?: boolean },
-) {
-  const supabase = await createClient();
-  return supabase.from("profiles").update(updates).eq("id", userId);
+    return [emailRes.request_id, smsRes.request_id];
+  } catch (error) {
+    const errorMessage = error instanceof Error
+      ? error.message
+      : "Verification initiation failed";
+    throw new Error(errorMessage);
+  }
 }

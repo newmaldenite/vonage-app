@@ -1,119 +1,33 @@
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { cookies } from "next/headers";
+import SignUpForm from "./SignUpForm";
+import { Message } from "@/lib/auth/types";
 import { redirect } from "next/navigation";
-import { SmtpMessage } from "../smtp-message";
-import { signUpAction } from "@/lib/auth/signup";
+import { cookies } from "next/headers";
 
-export default async function Signup(props: {
-  searchParams: Promise<Message>;
+export const dynamic = 'force-dynamic'; // Add this line
+
+export default async function SignupPage({
+  searchParams: searchParamsPromise,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const searchParams = await props.searchParams;
-  if ("message" in searchParams) {
-    return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-        <FormMessage message={searchParams} />
-      </div>
-    );
+  const searchParams = await searchParamsPromise;
+
+  // Handle verification redirect
+  if (searchParams.redirect === "/verify") {
+    const cookieStore = await cookies();
+    const emailRequestId = cookieStore.get("vrfy_email")?.value;
+    const smsRequestId = cookieStore.get("vrfy_sms")?.value;
+
+    if (emailRequestId && smsRequestId) {
+      return redirect("/verify");
+    }
   }
 
-  return (
-    <>
-      <form className="flex flex-col min-w-64 max-w-64 mx-auto">
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
-          Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
-            Sign in
-          </Link>
-        </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          {/* <Label htmlFor="name">Name</Label>
-          <Input name="name" placeholder="Your full name" required />
-          <Label htmlFor="username">Username</Label> */}
-          {/* <Input name="username" placeholder="Your username" required /> */}
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <Label htmlFor="phone_number">Phone Number</Label>
-          <Input
-            name="phone_number"
-            placeholder="+1234567890"
-            required
-            type="tel"
-          />
-          <SubmitButton
-            formAction={async (formData: FormData) => {
-              "use server";
+  // Construct message parameters
+  const messageParams: Message = {
+    type: searchParams.success ? 'success' : 'error',
+    content: searchParams.success || searchParams.message || ''
+  };
 
-              const email = formData.get("email") as string;
-              const password = formData.get("password") as string;
-              const phone_number = formData.get("phone_number") as string;
-
-              try {
-                const result = await signUpAction({
-                  email,
-                  password,
-                  phone_number,
-                });
-
-                if (result.error) {
-                  throw result.error;
-                }
-
-                if (!result.data?.requestIds) {
-                  throw new Error("Verification request IDs not generated");
-                }
-
-                // Get cookies instance with await
-                const cookieStore = await cookies();
-
-                // Set cookies securely
-                cookieStore.set("vrfy_email", result.data.requestIds.email, {
-                  secure: process.env.NODE_ENV === "production",
-                  httpOnly: true,
-                  sameSite: "strict",
-                  path: "/", // Changed from "/verify" to "/"
-                  maxAge: 600,
-                });
-                
-                cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
-                  secure: process.env.NODE_ENV === "production",
-                  httpOnly: true,
-                  sameSite: "strict",
-                  path: "/", // Changed from "/verify" to "/"
-                  maxAge: 600,
-                });
-                console.log("Cookies set successfully");
-                
-              } catch (error) {
-                const message =
-                  error instanceof Error
-                    ? error.message
-                    : "An unexpected error occurred";
-                redirect(`/sign-up?message=${encodeURIComponent(message)}`);
-              }
-
-              redirect("/verify");
-            }}
-            pendingText="Signing up..."
-          >
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
-      <SmtpMessage />
-    </>
-  );
+  return <SignUpForm searchParams={messageParams} />;
 }

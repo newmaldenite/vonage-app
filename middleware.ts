@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
@@ -37,45 +36,33 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  // Check auth state
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   const path = request.nextUrl.pathname;
 
-  if (session) {
-    const needsVerification = request.cookies.has("vrfy_email") ||
-      request.cookies.has("vrfy_sms");
+  // New: Check for verification completion
+  const isVerified =
+    request.cookies.get("verification_complete")?.value === "true";
 
-    // Redirect to verification if accessing protected routes
-    if (
-      needsVerification &&
-      (path.startsWith("/dashboard") || path === "/protected")
-    ) {
+  if (session) {
+    // Modified verification check
+    const needsVerification = !isVerified && (
+      request.cookies.has("vrfy_email") ||
+      request.cookies.has("vrfy_sms")
+    );
+
+    if (needsVerification && path.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/verify", request.url));
     }
   }
 
-  // Existing auth redirect logic
+  // Existing auth logic
   if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!session && (path.startsWith("/dashboard") || path === "/protected")) {
+  if (!session && path.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   return response;
 }
-
-// Update matcher to include verify page
-export const config = {
-  matcher: [
-    "/",
-    "/dashboard/:path*",
-    "/protected",
-    "/sign-in",
-    "/sign-up",
-    "/verify",
-  ],
-};

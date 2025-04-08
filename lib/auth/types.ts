@@ -10,24 +10,24 @@ export interface User extends SupabaseUser {
 
 export type AuthResponse =
   | {
-      data: {
-        user: User | null;
-        session: Session | null;
-        requestIds?: {
-          // Move inside data object
-          email: string;
-          sms: string;
-        };
+    data: {
+      user: User | null;
+      session: Session | null;
+      requestIds?: {
+        // Move inside data object
+        email: string;
+        sms: string;
       };
-      error: null;
-    }
-  | {
-      data: {
-        user: null;
-        session: null;
-      };
-      error: AuthError;
     };
+    error: null;
+  }
+  | {
+    data: {
+      user: null;
+      session: null;
+    };
+    error: AuthError;
+  };
 
 export type DeviceType = "mobile" | "desktop";
 
@@ -50,3 +50,8 @@ export interface VerificationPayload {
   smsCode: string;
   userId: string;
 }
+
+export type Message = {
+  type: "error" | "success";
+  content: string;
+};
