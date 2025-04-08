@@ -1,16 +1,18 @@
 // Purpose: Client component for admin dashbaord content
-"use client"
+"use client";
 
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 
 interface AdminDashboardContentProps {
-    user: User;
+  user: User;
 }
 
-export default function AdminDashboardContent({ user }: AdminDashboardContentProps) {
-    return (
-        <div>
+export default function AdminDashboardContent({
+  user,
+}: AdminDashboardContentProps) {
+  return (
+    <div>
       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <h2 className="text-lg font-medium mb-4">Admin Information</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -24,12 +26,12 @@ export default function AdminDashboardContent({ user }: AdminDashboardContentPro
           </div>
         </div>
       </div>
-      
+
       {/* Add your admin functionality here */}
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-lg font-medium mb-4">Admin Controls</h2>
         <p>Your admin controls and functionality will go here.</p>
       </div>
     </div>
-    )
+  );
 }
