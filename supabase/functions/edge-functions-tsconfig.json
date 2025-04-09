@@ -2,10 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext", "deno.ns"],
-    "types": ["@types/deno"],
+    "types": ["@types/deno", "djwt"],
     "module": "ESNext",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler"
   }
 }

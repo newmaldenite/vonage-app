@@ -2,11 +2,52 @@
 
 "use server";
 import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { signInAction as coreSignIn } from "@/lib/auth/signin";
 import { initiatePasswordReset, updateUserPassword } from "@/lib/auth/password";
+import { signUpAction } from "@/lib/auth/signup";
+
+export async function handleSignUp(_: any, formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const phone_number = formData.get("phone_number") as string;
+
+  try {
+    const result = await signUpAction({ email, password, phone_number });
+
+    if (result.error) {
+      return { error: result.error.message };
+    }
+
+    if (!result.data?.requestIds) {
+      return { error: "Verification initiation failed" };
+    }
+
+    // Set verification cookies
+    const cookieStore = await cookies();
+    cookieStore.set("vrfy_email", result.data.requestIds.email, {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "strict",
+      path: "/verify",
+      maxAge: 600,
+    });
+    cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "strict",
+      path: "/verify",
+      maxAge: 600,
+    });
+
+    return { redirect: "/verify" };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Signup failed" };
+  }
+}
 
 // Re-export core authentication actions
 export { coreSignIn as signInAction };

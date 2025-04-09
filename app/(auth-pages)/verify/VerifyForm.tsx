@@ -1,7 +1,7 @@
-"use client"; // This is a Client Component
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { VonageRequest, callVonageAPI } from "@/lib/auth/vonage";
+import { callVonageAPI } from "@/lib/auth/vonage";
 
 interface VerifyFormProps {
   emailRequestId: string;
@@ -17,6 +17,20 @@ export default function VerifyForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (success) {
+      // Clear verification cookies
+      document.cookie = "vrfy_email=; path=/verify; max-age=0";
+      document.cookie = "vrfy_sms=; path=/verify; max-age=0";
+
+      // Set verification complete marker
+      document.cookie = "verification_complete=true; path=/; max-age=3600";
+
+      // Force full page reload
+      window.location.href = "/dashboard";
+    }
+  }, [success]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,16 +52,23 @@ export default function VerifyForm({
       ]);
 
       if (emailRes.status === "completed" && smsRes.status === "completed") {
-        document.cookie = "vrfy_email=; path=/; max-age=0";
-        document.cookie = "vrfy_sms=; path=/; max-age=0";
-
         setSuccess(true);
-        router.push("/dashboard");
       } else {
         setError("Invalid codes - please try again");
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed");
+    } catch (err: unknown) {
+      // Explicit type annotation
+      if (err instanceof Error) {
+        // Handle known errors
+        if (err.message.includes("request-not-found")) {
+          setError("Verification request expired or already used");
+        } else {
+          setError(err.message);
+        }
+      } else {
+        // Handle unknown errors
+        setError("An unexpected verification error occurred");
+      }
     }
   };
 

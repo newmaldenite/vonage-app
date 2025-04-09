@@ -1,6 +1,9 @@
+// @ts-ignore - Deno deployment handles this URL import
+import { create } from "https://deno.land/x/djwt@v2.8/mod.ts";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
@@ -20,8 +23,43 @@ Deno.serve(async (req: Request) => {
     const { action, channel, phoneNumber, emailAddress, request_id, code } =
       body;
 
-    const auth = btoa(
-      `${Deno.env.get("VONAGE_API_KEY")}:${Deno.env.get("VONAGE_API_SECRET")}`,
+    const applicationId = Deno.env.get("VONAGE_APPLICATION_ID");
+    const privateKeyPem = Deno.env.get("VONAGE_PRIVATE_KEY");
+
+    if (!applicationId || !privateKeyPem) {
+      throw new Error("Missing Vonage credentials in environment variables");
+    }
+
+    // Process PEM key
+    const pemContents = privateKeyPem
+      .replace(/-----BEGIN PRIVATE KEY-----/g, "")
+      .replace(/-----END PRIVATE KEY-----/g, "")
+      .replace(/\s+/g, "");
+
+    const privateKeyBuffer = new Uint8Array(
+      atob(pemContents)
+        .split("")
+        .map((c) => c.charCodeAt(0)),
+    );
+
+    // Import private key
+    const privateKey = await crypto.subtle.importKey(
+      "pkcs8",
+      privateKeyBuffer,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+
+    // Create JWT
+    const token = await create(
+      { alg: "RS256", typ: "JWT" }, // Vonage requires RS256 for private keys
+      {
+        application_id: applicationId,
+        iat: Math.floor(Date.now() / 1000),
+        jti: crypto.randomUUID(),
+      },
+      privateKey,
     );
 
     switch (action.toLowerCase()) {
@@ -76,7 +114,7 @@ Deno.serve(async (req: Request) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Basic ${auth}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             brand: "Team SAN-e",
@@ -101,7 +139,7 @@ Deno.serve(async (req: Request) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Basic ${auth}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ code }),
           },

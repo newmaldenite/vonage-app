@@ -1,0 +1,64 @@
+{
+  "version": "4",
+  "redirects": {
+    "https://deno.land/x/djwt/mod.ts": "https://deno.land/x/djwt@v3.0.2/mod.ts"
+  },
+  "remote": {
+    "https://deno.land/std@0.161.0/encoding/base64.ts": "c57868ca7fa2fbe919f57f88a623ad34e3d970d675bdc1ff3a9d02bba7409db2",
+    "https://deno.land/std@0.161.0/encoding/base64url.ts": "a5f82a9fa703bd85a5eb8e7c1296bc6529e601ebd9642cc2b5eaa6b38fa9e05a",
+    "https://deno.land/std@0.221.0/encoding/_util.ts": "beacef316c1255da9bc8e95afb1fa56ed69baef919c88dc06ae6cb7a6103d376",
+    "https://deno.land/std@0.221.0/encoding/base64.ts": "8ccae67a1227b875340a8582ff707f37b131df435b07080d3bb58e07f5f97807",
+    "https://deno.land/std@0.221.0/encoding/base64url.ts": "9cc46cf510436be63ac00ebf97a7de1993e603ca58e1853b344bf90d80ea9945",
+    "https://deno.land/x/djwt@v2.8/algorithm.ts": "fa4c7354ab9f4808d38104fdc6f21c8270f65f109ed84136d4fe31a4504426d4",
+    "https://deno.land/x/djwt@v2.8/deps.ts": "261b7b6bfe2602329d8f9de2938c2a898cd6dfa746b3454ae415df2c53e6ae4d",
+    "https://deno.land/x/djwt@v2.8/mod.ts": "7abba8518688e88648882a95161b42391ac6043c142b1ab491b36f712189e1e1",
+    "https://deno.land/x/djwt@v2.8/signature.ts": "a5649368a4b433b2810e7d47f53661fe3b0f7fe1778cb49234ceae3d6e861185",
+    "https://deno.land/x/djwt@v2.8/util.ts": "0d78272bd23a4656ceabe137d496fcca37cf3de36212477642aa5d85a880d87a",
+    "https://deno.land/x/djwt@v3.0.2/algorithm.ts": "b1c6645f9dbd6e6c47c123a3b18c28b956f91c65ed17f5b6d5d968fc3750542b",
+    "https://deno.land/x/djwt@v3.0.2/deps.ts": "a7954fe567f2097b4f6aca11d091b6df658e485a817ac4dee47257ed5c28fd6e",
+    "https://deno.land/x/djwt@v3.0.2/mod.ts": "962d8f2c4d6a4db111f45d777b152356aec31ba7db0ca664601175a422629857",
+    "https://deno.land/x/djwt@v3.0.2/signature.ts": "16238fbf558267c85dd6c0178045f006c8b914a7301db87149f3318326569272",
+    "https://deno.land/x/djwt@v3.0.2/util.ts": "5cb264d2125c553678e11446bcfa0494025d120e3f59d0a3ab38f6800def697d"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@eslint/eslintrc@2",
+        "npm:@radix-ui/react-checkbox@^1.1.1",
+        "npm:@radix-ui/react-dropdown-menu@^2.1.1",
+        "npm:@radix-ui/react-label@^2.1.0",
+        "npm:@radix-ui/react-slot@^1.1.0",
+        "npm:@supabase/ssr@latest",
+        "npm:@supabase/supabase-js@^2.49.3",
+        "npm:@tabler/icons-react@^3.31.0",
+        "npm:@types/deno@^2.2.0",
+        "npm:@types/eslint__eslintrc@^2.1.2",
+        "npm:@types/node@22.10.2",
+        "npm:@types/react-dom@19.0.2",
+        "npm:@types/react@^19.0.2",
+        "npm:autoprefixer@10.4.20",
+        "npm:class-variance-authority@0.7",
+        "npm:clsx@^2.1.1",
+        "npm:eslint-config-next@^15.2.3",
+        "npm:eslint@^9.22.0",
+        "npm:framer-motion@^12.6.3",
+        "npm:husky@^9.1.7",
+        "npm:lucide-react@0.468",
+        "npm:motion@^12.6.3",
+        "npm:next-themes@~0.4.3",
+        "npm:next@^15.2.4",
+        "npm:postcss@8.4.49",
+        "npm:prettier@^3.3.3",
+        "npm:react-dom@19.0.0",
+        "npm:react@19.0.0",
+        "npm:save-dev@^0.0.1-security",
+        "npm:supabase@^2.20.3",
+        "npm:tailwind-merge@^2.6.0",
+        "npm:tailwindcss-animate@^1.0.7",
+        "npm:tailwindcss@3.4.17",
+        "npm:typescript@5.7.2",
+        "npm:uuid@^11.1.0"
+      ]
+    }
+  }
+}

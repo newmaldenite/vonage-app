@@ -40,7 +40,6 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  // Check auth state
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -91,17 +90,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ==== EXISTING VERIFICATION & AUTH LOGIC ====
-  if (session) {
-    const needsVerification =
-      request.cookies.has("vrfy_email") || request.cookies.has("vrfy_sms");
+    // Check verification status
+  const isVerified =
+    request.cookies.get("verification_complete")?.value === "true";
+  const hasEmailRequestId = request.cookies.has("vrfy_email");
+  const hasSmsRequestId = request.cookies.has("vrfy_sms");
 
-    // Redirect to verification if accessing protected routes
-    if (
-      needsVerification &&
-      (path.startsWith("/dashboard") || path === "/protected")
-    ) {
-      return NextResponse.redirect(new URL("/verify", request.url));
+  // Redirect logic for verification
+  if (session) {
+    // Force verification before dashboard access
+    if (!isVerified && (hasEmailRequestId || hasSmsRequestId)) {
+      if (path.startsWith("/dashboard") || path === "/protected") {
+        return NextResponse.redirect(new URL("/verify", request.url));
+      }
+    }
+
+    // Clear verification cookies after completion
+    if (isVerified && (hasEmailRequestId || hasSmsRequestId)) {
+      response.cookies.delete("vrfy_email");
+      response.cookies.delete("vrfy_sms");
     }
 
     // Special handling for root and login pages when user is admin
@@ -113,8 +120,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
   }
-
+  
   // Regular authentication redirect logic
+
   if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -126,7 +134,6 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Update matcher to include verify page
 export const config = {
   matcher: [
     "/",

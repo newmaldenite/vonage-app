@@ -50,3 +50,8 @@ export interface VerificationPayload {
   smsCode: string;
   userId: string;
 }
+
+export type Message = {
+  type: "error" | "success";
+  content: string;
+};
