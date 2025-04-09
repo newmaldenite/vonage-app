@@ -8,10 +8,10 @@ export default async function VerifyPage() {
   const isVerified = cookieStore.get("verification_complete")?.value === "true";
   // const smsRequestId = cookieStore.get("vrfy_sms")?.value;
 
-    // Redirect if already verified
-    if (isVerified) {
-      redirect('/dashboard');
-    }
+  // Redirect if already verified
+  if (isVerified) {
+    redirect("/dashboard");
+  }
 
   if (!emailRequestId) {
     //  || !smsRequestId
@@ -19,7 +19,7 @@ export default async function VerifyPage() {
   }
 
   return (
-    <VerifyForm emailRequestId={emailRequestId}/>
-    //  smsRequestId={smsRequestId} 
+    <VerifyForm emailRequestId={emailRequestId} />
+    //  smsRequestId={smsRequestId}
   );
 }

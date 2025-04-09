@@ -33,8 +33,7 @@ export type DeviceType = "mobile" | "desktop";
 
 export interface VerificationAttempt {
   request_id: string;
-  //  | "sms"
-  channel: "email";
+  channel: "email" | "sms";
   recipient: string;
   user_id: string;
   created_at: string;
