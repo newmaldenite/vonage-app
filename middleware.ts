@@ -45,23 +45,30 @@ export async function middleware(request: NextRequest) {
   const isVerified =
     request.cookies.get("verification_complete")?.value === "true";
   const hasEmailRequestId = request.cookies.has("vrfy_email");
-  const hasSmsRequestId = request.cookies.has("vrfy_sms");
+  // const hasSmsRequestId = request.cookies.has("vrfy_sms");
 
   // Redirect logic for verification
   if (session) {
     // Force verification before dashboard access
-    if (!isVerified && (hasEmailRequestId || hasSmsRequestId)) {
-      if (path.startsWith("/dashboard") || path === "/protected") {
+    //  || hasSmsRequestId
+    if (!isVerified && hasEmailRequestId) {
+      if (path !== "/verify") {
         return NextResponse.redirect(new URL("/verify", request.url));
       }
     }
 
     // Clear verification cookies after completion
-    if (isVerified && (hasEmailRequestId || hasSmsRequestId)) {
+    //  || hasSmsRequestId
+    if (isVerified && hasEmailRequestId) {
       response.cookies.delete("vrfy_email");
-      response.cookies.delete("vrfy_sms");
+      // response.cookies.delete("vrfy_sms");
     }
   }
+
+  // Allow access to verify page even with session
+  // if (path === "/verify" && hasEmailRequestId) {
+  //   return response;
+  // }
 
   // Existing auth redirects
   if (session && (path === "/sign-in" || path === "/sign-up" || path === "/")) {

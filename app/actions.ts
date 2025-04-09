@@ -13,10 +13,10 @@ import { signUpAction } from "@/lib/auth/signup";
 export async function handleSignUp(_: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const phone_number = formData.get("phone_number") as string;
-
+  // const phone_number = formData.get("phone_number") as string;
+  // , phone_number
   try {
-    const result = await signUpAction({ email, password, phone_number });
+    const result = await signUpAction({ email, password });
 
     if (result.error) {
       return { error: result.error.message };
@@ -32,16 +32,16 @@ export async function handleSignUp(_: any, formData: FormData) {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       sameSite: "strict",
-      path: "/verify",
+      path: "/",
       maxAge: 600,
     });
-    cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "strict",
-      path: "/verify",
-      maxAge: 600,
-    });
+    // cookieStore.set("vrfy_sms", result.data.requestIds.sms, {
+    //   secure: process.env.NODE_ENV === "production",
+    //   httpOnly: true,
+    //   sameSite: "strict",
+    //   path: "/verify",
+    //   maxAge: 600,
+    // });
 
     return { redirect: "/verify" };
   } catch (error) {

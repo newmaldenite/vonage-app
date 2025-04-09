@@ -16,9 +16,9 @@ export default async function SignupPage({
   if (searchParams.redirect === "/verify") {
     const cookieStore = await cookies();
     const emailRequestId = cookieStore.get("vrfy_email")?.value;
-    const smsRequestId = cookieStore.get("vrfy_sms")?.value;
-
-    if (emailRequestId && smsRequestId) {
+    // const smsRequestId = cookieStore.get("vrfy_sms")?.value;
+//  && smsRequestId
+    if (emailRequestId) {
       return redirect("/verify");
     }
   }

@@ -10,30 +10,31 @@ export interface User extends SupabaseUser {
 
 export type AuthResponse =
   | {
-      data: {
-        user: User | null;
-        session: Session | null;
-        requestIds?: {
-          // Move inside data object
-          email: string;
-          sms: string;
-        };
+    data: {
+      user: User | null;
+      session: Session | null;
+      requestIds?: {
+        // Move inside data object
+        email: string;
+        // sms: string;
       };
-      error: null;
-    }
-  | {
-      data: {
-        user: null;
-        session: null;
-      };
-      error: AuthError;
     };
+    error: null;
+  }
+  | {
+    data: {
+      user: null;
+      session: null;
+    };
+    error: AuthError;
+  };
 
 export type DeviceType = "mobile" | "desktop";
 
 export interface VerificationAttempt {
   request_id: string;
-  channel: "email" | "sms";
+  //  | "sms"
+  channel: "email";
   recipient: string;
   user_id: string;
   created_at: string;
@@ -42,12 +43,12 @@ export interface VerificationAttempt {
 export interface SignUpPayload {
   email: string;
   password: string;
-  phone_number: string;
+  // phone_number: string;
 }
 
 export interface VerificationPayload {
   emailCode: string;
-  smsCode: string;
+  // smsCode: string;
   userId: string;
 }
 

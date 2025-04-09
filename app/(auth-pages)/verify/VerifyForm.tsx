@@ -5,15 +5,15 @@ import { callVonageAPI } from "@/lib/auth/vonage";
 
 interface VerifyFormProps {
   emailRequestId: string;
-  smsRequestId: string;
+  // smsRequestId: string;
 }
 
 export default function VerifyForm({
   emailRequestId,
-  smsRequestId,
+  // smsRequestId,
 }: VerifyFormProps) {
   const [emailCode, setEmailCode] = useState("");
-  const [phoneCode, setPhoneCode] = useState("");
+  // const [phoneCode, setPhoneCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -21,8 +21,8 @@ export default function VerifyForm({
   useEffect(() => {
     if (success) {
       // Clear verification cookies
-      document.cookie = "vrfy_email=; path=/verify; max-age=0";
-      document.cookie = "vrfy_sms=; path=/verify; max-age=0";
+      document.cookie = "vrfy_email=; path=/; max-age=0";
+      // document.cookie = "vrfy_sms=; path=/verify; max-age=0";
 
       // Set verification complete marker
       document.cookie = "verification_complete=true; path=/; max-age=3600";
@@ -36,22 +36,24 @@ export default function VerifyForm({
     e.preventDefault();
 
     try {
-      const [emailRes, smsRes] = await Promise.all([
+      const [emailRes] = await Promise.all([
+        // , smsRes
         callVonageAPI({
           action: "check",
           channel: "email",
           request_id: emailRequestId,
           code: emailCode,
         }),
-        callVonageAPI({
-          action: "check",
-          channel: "sms",
-          request_id: smsRequestId,
-          code: phoneCode,
-        }),
+        // callVonageAPI({
+        //   action: "check",
+        //   channel: "sms",
+        //   request_id: smsRequestId,
+        //   code: phoneCode,
+        // }),
       ]);
 
-      if (emailRes.status === "completed" && smsRes.status === "completed") {
+      if (emailRes.status === "completed") {
+        //  && smsRes.status === "completed"
         setSuccess(true);
       } else {
         setError("Invalid codes - please try again");
@@ -88,14 +90,14 @@ export default function VerifyForm({
             className="w-full p-2 border rounded"
             required
           />
-          <input
+          {/* <input
             type="text"
             placeholder="SMS code"
             value={phoneCode}
             onChange={(e) => setPhoneCode(e.target.value)}
             className="w-full p-2 border rounded"
             required
-          />
+          /> */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"

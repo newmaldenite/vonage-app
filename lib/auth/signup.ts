@@ -16,7 +16,7 @@ export async function signUpAction(
       password: payload.password,
       options: {
         data: {
-          phone_number: payload.phone_number,
+          // phone_number: payload.phone_number,
         },
       },
     });
@@ -26,20 +26,20 @@ export async function signUpAction(
     // Create user profile
     const { error: profileError } = await supabase.from("profiles").upsert({
       id: data.user?.id,
-      phone_number: payload.phone_number,
+      // phone_number: payload.phone_number,
     });
 
     if (profileError) throw profileError;
 
-    // Initiate Vonage verification
-    const [emailRequestId, smsRequestId] = await initiateDualVerification(
+    // Initiate Vonage verification , smsRequestId commented out
+    const [emailRequestId] = await initiateDualVerification(
       payload.email,
-      payload.phone_number,
+      // payload.phone_number,
     );
 
     console.log("Verification initiated:", {
       emailRequestId,
-      smsRequestId,
+      // smsRequestId,
       ttl: 900,
     });
 
@@ -49,7 +49,7 @@ export async function signUpAction(
         session: data.session,
         requestIds: {
           email: emailRequestId,
-          sms: smsRequestId,
+          // sms: smsRequestId,
         },
       },
       error: null,
@@ -70,8 +70,8 @@ export async function signUpAction(
 
 async function initiateDualVerification(
   email: string,
-  phone_number: string,
-): Promise<[string, string]> {
+  // phone_number: string,
+): Promise<[string]> {
   try {
     const emailRes = await callVonageAPI({
       action: "start",
@@ -79,16 +79,18 @@ async function initiateDualVerification(
       emailAddress: email,
     });
 
-    const smsRes = await callVonageAPI({
-      action: "start",
-      channel: "sms",
-      phoneNumber: phone_number,
-    });
+    // const smsRes = await callVonageAPI({
+    //   action: "start",
+    //   channel: "sms",
+    //   phoneNumber: phone_number,
+    // });
 
-    return [emailRes.request_id, smsRes.request_id];
+    // , smsRes.request_id // commented out from the return statement
+    return [emailRes.request_id];
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Verification initiation failed";
+    const errorMessage = error instanceof Error
+      ? error.message
+      : "Verification initiation failed";
     throw new Error(errorMessage);
   }
 }
