@@ -3,17 +3,14 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache"; // tells Next.js to refres/revalidate a specific route/path next time someone visits it
 
 const ADMIN_ROLE = "admin";
-const ADMIN_EMAIL_DOMAIN =
-  process.env.ADMIN_EMAIL_DOMAIN ||
-  "https://vonage-app-three.vercel.app/sign-in";
+const ADMIN_EMAIL_DOMAIN = process.env.ADMIN_EMAIL_DOMAIN;
 
 // simple utility function
 export async function sendAdminMagicLink(email: string) {
-  // Validate the email belongs to the organisation
-  if (!email.endsWith(`@${ADMIN_EMAIL_DOMAIN}`)) {
+  // Only validate the email domain if ADMIN_EMAIL_DOMAIN is the one specified
+  if (ADMIN_EMAIL_DOMAIN && !email.endsWith(`@${ADMIN_EMAIL_DOMAIN}`)) {
     throw new Error(
       `Admin email must be a valid ${ADMIN_EMAIL_DOMAIN} address`,
     );
@@ -21,15 +18,31 @@ export async function sendAdminMagicLink(email: string) {
 
   const supabase = await createClient();
 
-  // Get the origin for the callback URL
-  const origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Get the origin for the callback URL after checking the environment and set appropriate origin
+  let origin;
+  if (process.env.NODE_ENV === "production") {
+    // In production, use the base URL from environment variable or fallback to a production URL
+    origin =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://vonage-app-three.vercel.app";
+  } else if (process.env.NODE_ENV === "development") {
+    // In development, use localhost with the specified port
+    origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  } else {
+    // For testing or other environments
+    origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  }
+
+  console.log(`Environment: ${process.env.NODE_ENV}, using origin: ${origin}`);
+
+  const redirectTo = "/admin/dashboard";
+  console.log("Setting redirect_to parameter:", redirectTo);
 
   const { error } = await supabase.auth.signInWithOtp({
     // pulling the error object out from the result of signInWithOtp()
     email,
     options: {
       // This callback URL will be used after the user clicks the magic link
-      emailRedirectTo: `${origin}/api/auth/admin-callback`,
+      emailRedirectTo: `${origin}${redirectTo}`, //correct file path
       data: {
         role: ADMIN_ROLE, // Store role information
       },
