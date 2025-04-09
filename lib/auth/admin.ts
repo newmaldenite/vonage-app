@@ -26,7 +26,7 @@ export async function sendAdminMagicLink(email: string) {
       process.env.NEXT_PUBLIC_BASE_URL || "https://vonage-app-three.vercel.app";
   } else if (process.env.NODE_ENV === "development") {
     // In development, use localhost with the specified port
-    origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    origin = "http://localhost:3000";
   } else {
     // For testing or other environments
     origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -42,7 +42,7 @@ export async function sendAdminMagicLink(email: string) {
     email,
     options: {
       // This callback URL will be used after the user clicks the magic link
-      emailRedirectTo: `${origin}${redirectTo}`, //correct file path
+      emailRedirectTo: `${origin}/auth/callback?redirect_to=${redirectTo}`, //correct file path
       data: {
         role: ADMIN_ROLE, // Store role information
       },

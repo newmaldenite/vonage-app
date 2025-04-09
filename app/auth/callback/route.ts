@@ -1,4 +1,5 @@
 // app/auth/callback/route.ts
+// Also includes callback handler for precessing the magic link authentication
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
