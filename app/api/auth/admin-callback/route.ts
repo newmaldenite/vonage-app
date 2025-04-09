@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   // the `/auth/callback` route is required for the magic link below
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  console.log("requestURL CODE: ", code);
+  console.log("Admin callback - requestURL CODE: ", code);
   const origin = requestUrl.origin;
 
   if (code) {
@@ -17,13 +17,15 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       // Redirect to admin login with error
+      console.log("Admin authentication failed:", error)
       return NextResponse.redirect(
         `${origin}/admin/login?error=Authentication failed`,
       );
     }
 
     // After successful authentication, redirect to admin dashboard
-    return NextResponse.redirect(`${origin}/admin/dashbord`);
+    console.log("Admin authentication successful - redirecting to dashboard.")
+    return NextResponse.redirect(`${origin}/admin/dashboard`);
   }
   // If no code is present, redirect to admin login
   return NextResponse.redirect(`${origin}/admin/login`);
