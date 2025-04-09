@@ -2,13 +2,11 @@
 // Purpose: Utility script to create the first admin user in your system
 
 import { createClient } from "@supabase/supabase-js";
-import * as dotenv from 'dotenv';
-dotenv.config({ path: ".env.local"});
-
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use service role key for admin operations
-
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error("Error: Supabase URL and service role key are required");
@@ -49,9 +47,12 @@ async function createFirstAdmin(email: string): Promise<void> {
     console.log("Found existing user with ID:", userId);
 
     // Update user metadata to include admin role
-    const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
-      user_metadata: { role: "admin" },
-    });
+    const { error: updateError } = await supabase.auth.admin.updateUserById(
+      userId,
+      {
+        user_metadata: { role: "admin" },
+      },
+    );
 
     if (updateError) {
       console.error("Error updating user metadata:", updateError);

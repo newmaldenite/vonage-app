@@ -4,9 +4,8 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-
 const ADMIN_ROLE = "admin";
-const ADMIN_EMAIL_DOMAIN = process.env.ADMIN_EMAIL_DOMAIN 
+const ADMIN_EMAIL_DOMAIN = process.env.ADMIN_EMAIL_DOMAIN;
 
 // simple utility function
 export async function sendAdminMagicLink(email: string) {
@@ -20,19 +19,20 @@ export async function sendAdminMagicLink(email: string) {
   const supabase = await createClient();
 
   // Get the origin for the callback URL after checking the environment and set appropriate origin
-let origin;
-if (process.env.NODE_ENV === 'production') {
-  // In production, use the base URL from environment variable or fallback to a production URL
-  origin = process.env.NEXT_PUBLIC_BASE_URL || 'https://vonage-app-three.vercel.app';
-} else if (process.env.NODE_ENV === 'development') {
-  // In development, use localhost with the specified port
-  origin = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-} else {
-  // For testing or other environments
-  origin = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-}
+  let origin;
+  if (process.env.NODE_ENV === "production") {
+    // In production, use the base URL from environment variable or fallback to a production URL
+    origin =
+      process.env.NEXT_PUBLIC_BASE_URL || "https://vonage-app-three.vercel.app";
+  } else if (process.env.NODE_ENV === "development") {
+    // In development, use localhost with the specified port
+    origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  } else {
+    // For testing or other environments
+    origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  }
 
-console.log(`Environment: ${process.env.NODE_ENV}, using origin: ${origin}`);
+  console.log(`Environment: ${process.env.NODE_ENV}, using origin: ${origin}`);
 
   const redirectTo = "/admin/dashboard";
   console.log("Setting redirect_to parameter:", redirectTo);
@@ -42,7 +42,7 @@ console.log(`Environment: ${process.env.NODE_ENV}, using origin: ${origin}`);
     email,
     options: {
       // This callback URL will be used after the user clicks the magic link
-      emailRedirectTo:  `${origin}${redirectTo}`, //correct file path 
+      emailRedirectTo: `${origin}${redirectTo}`, //correct file path
       data: {
         role: ADMIN_ROLE, // Store role information
       },

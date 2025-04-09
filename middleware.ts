@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-  // Initialize response 
+  // Initialize response
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -44,8 +44,8 @@ export async function middleware(request: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  
-  // Get user data if authenticated 
+
+  // Get user data if authenticated
   const user = session?.user;
   const path = request.nextUrl.pathname;
 
@@ -65,7 +65,7 @@ export async function middleware(request: NextRequest) {
         .select("id")
         .eq("user_id", user.id)
         .single();
-      
+
       isAdminUser = !!adminData;
     }
   }
@@ -103,9 +103,12 @@ export async function middleware(request: NextRequest) {
     ) {
       return NextResponse.redirect(new URL("/verify", request.url));
     }
-    
+
     // Special handling for root and login pages when user is admin
-    if (isAdminUser && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
+    if (
+      isAdminUser &&
+      (path === "/sign-in" || path === "/sign-up" || path === "/")
+    ) {
       // Admin users should go to the admin dashboard
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
@@ -132,6 +135,6 @@ export const config = {
     "/sign-in",
     "/sign-up",
     "/verify",
-    "/admin/:path*"
+    "/admin/:path*",
   ],
 };

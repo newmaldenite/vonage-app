@@ -17,14 +17,14 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       // Redirect to admin login with error
-      console.log("Admin authentication failed:", error)
+      console.log("Admin authentication failed:", error);
       return NextResponse.redirect(
         `${origin}/admin/login?error=Authentication failed`,
       );
     }
 
     // After successful authentication, redirect to admin dashboard
-    console.log("Admin authentication successful - redirecting to dashboard.")
+    console.log("Admin authentication successful - redirecting to dashboard.");
     return NextResponse.redirect(`${origin}/admin/dashboard`);
   }
   // If no code is present, redirect to admin login
