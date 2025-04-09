@@ -29,5 +29,6 @@ export default async function SignupPage({
     content: searchParams.success || searchParams.message || "",
   };
 
+
   return <SignUpForm searchParams={messageParams} />;
 }

@@ -66,11 +66,11 @@ export function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
+                label: ":)",
                 href: "#",
                 icon: (
                   <Image
-                    src="https://assets.aceternity.com/manu.png"
+                    src="https://www.svgrepo.com/show/506800/home.svg"
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
