@@ -9,6 +9,7 @@ const ADMIN_EMAIL_DOMAIN = process.env.ADMIN_EMAIL_DOMAIN;
 
 // simple utility function
 export async function sendAdminMagicLink(email: string) {
+  
   // Only validate the email domain if ADMIN_EMAIL_DOMAIN is the one specified
   if (ADMIN_EMAIL_DOMAIN && !email.endsWith(`@${ADMIN_EMAIL_DOMAIN}`)) {
     throw new Error(
