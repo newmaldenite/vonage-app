@@ -87,9 +87,8 @@ async function initiateDualVerification(
 
     return [emailRes.request_id, smsRes.request_id];
   } catch (error) {
-    const errorMessage = error instanceof Error
-      ? error.message
-      : "Verification initiation failed";
+    const errorMessage =
+      error instanceof Error ? error.message : "Verification initiation failed";
     throw new Error(errorMessage);
   }
 }
