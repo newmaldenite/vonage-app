@@ -51,7 +51,6 @@ Collect the following fields via registration form:
 - Email (used as login identifier)
 - Password (following security guidelines)
 - Phone number (for 2FA)
-- Location (Country and City)
 
 ---
 
@@ -107,4 +106,5 @@ touch .env
 
 **Authors**
 codesungrape
+newmaldenite
 
