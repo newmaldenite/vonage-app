@@ -1,8 +1,8 @@
 # 🔐 Next-Gen Secure Access Management Platform
 
-In a world where security and user experience are key, businesses are moving away from passwords toward more secure and seamless authentication methods.
+We are very grateful to have been given the chance to participate in this hackathon. It was a great learning expereince and through it we have learnt more about authentication and ways of authorzing at an advanced level- thank you!
 
-This project is a **Next-Gen Secure Access Management Platform** designed to provide robust user authentication, fraud detection, and secure access management tools.
+The brief was to create a **Next-Gen Secure Access Management Platform** designed to provide robust user authentication, fraud detection, and secure access management tools. Security and user experiences were aslo key, with businesses are moving away from passwords toward more secure and seamless authentication methods. 
 
 ---
 
@@ -103,3 +103,8 @@ npm install
 
 # 3. Create .env file and configure environment variables
 touch .env
+
+
+**Authors**
+codesungrape
+
