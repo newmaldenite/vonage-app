@@ -8,6 +8,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { storeVerificationAttempts } from "./supabase";
 import { detectDeviceType } from "@/utils/device-utils";
 import { AuthResponse, DeviceType, VerificationAttempt } from "./types";
+import { cookies } from "next/headers";
 
 // /lib/auth/signin.ts
 export const signInAction = async (formData: FormData) => {
@@ -47,9 +48,18 @@ export const signInAction = async (formData: FormData) => {
     const verification = await handleSecondFactor(data.user);
     await storeVerificationAttempts([verification]);
 
+    // Store request_id in cookie
+    const cookieStore = await cookies();
+    cookieStore.set("2fa_request_id", verification.request_id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 300, // 5 minutes
+      path: "/",
+    });
+
     return encodedRedirect(
-      "error",
-      "/sign-in",
+      "success",
+      "/verifysignin",
       `Verification code sent to ${verification.recipient}`,
     );
 
@@ -84,7 +94,7 @@ async function authenticateUser(email: string, password: string) {
 async function checkRiskFactors(user: User) {
   // Implementation from previous risk assessment logic
   console.log("Explicitly bypassing 2FA for testing...");
-  return false; // MUST return false to bypass 2FA
+  return true; // returning TRUE for testing purposes
 }
 
 async function handleSecondFactor(
@@ -93,8 +103,9 @@ async function handleSecondFactor(
   const deviceType = await detectDeviceType();
   const channel = deviceType === "mobile" ? "sms" : "email"; // Map to valid channels
 
-  const recipient =
-    channel === "sms" ? await getRegisteredPhone(user.id) : user.email!;
+  const recipient = channel === "sms"
+    ? await getRegisteredPhone(user.id)
+    : user.email!;
 
   const response = await callVonageAPI({
     action: "start",

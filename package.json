@@ -20,7 +20,7 @@
     "autoprefixer": "10.4.20",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.6.3",
     "husky": "^9.1.7",
     "lucide-react": "^0.468.0",
