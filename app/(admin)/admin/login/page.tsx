@@ -1,5 +1,8 @@
 // Purpose: server componenet for admin login page that displays the login form - server component- runs on the server, not in the browser an can access server-only resources (DBs, backend APIs, secret envs, filesystem)
-
+export const metadata = {
+  robots: "noindex, nofollow",
+}; // Meta Tag : Directly tells search engines not to index.
+export const dynamic = "force-dynamic"; // Prevents static generation
 import { AdminLoginForm } from "./AdminLoginForm";
 
 export default function AdminLoginPage() {
