@@ -1,6 +1,6 @@
 # 🔐 Next-Gen Secure Access Management Platform
 
-We are very grateful to have been given the chance to participate in this hackathon. It was a great learning expereince and through it we have learnt more about authentication and ways of authorzing at an advanced level- thank you!
+We are very grateful to have been given the chance to participate in this hackathon. It was a great learning expereince and through it we have learnt more about authentication and ways of authorizing at an advanced level- thank you!
 
 The brief was to create a **Next-Gen Secure Access Management Platform** designed to provide robust user authentication, fraud detection, and secure access management tools. Security and user experiences were aslo key, with businesses are moving away from passwords toward more secure and seamless authentication methods. 
 
@@ -35,7 +35,7 @@ Password-based login system enhanced with **adaptive two-factor authentication (
    - If **mobile**, trigger Number Verification API
    - If **non-mobile**, send OTP via email
 3. User receives appropriate message:
-   - ✅ `Verification successful! Welcome back, [User Name].`
+   - ✅ `Welcome back, [User Name].`
    - ❌ `Verification failed. Please contact support.`
 
 ---
@@ -50,7 +50,6 @@ Collect the following fields via registration form:
 - Phone number (for 2FA)
 
 ---
-
 ### 🌍 Access Control & Risk Detection
 
 Enhance login security through:
@@ -65,11 +64,20 @@ Enhance login security through:
 - Notify users of any suspicious activity
 
 ---
+## First Admin User Setup
 
+The first superuser is initialized via the `/scripts/create-first-admin.ts` script. To use it:
+
+```bash
+npx ts-node scripts/create-first-admin.ts admin@example.com
+```
+
+---
 ### 📊 Admin Dashboard (Optional)
 
 A secure dashboard for system administrators to monitor fraud and user authentication trends.
 - ✅ `Verification successful! Welcome back, [User Name].`
+- The first superuser is initialized via the /scripts/create-first-admin.ts, please see for instructions for node.js input
 
 **Dashboard Features:**
 - None - only static boilerplate
@@ -102,6 +110,6 @@ touch .env
 
 
 **Authors**
-codesungrape
-newmaldenite
+https://github.com/codesungrape
+https://github.com/newmaldenite
 
