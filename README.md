@@ -32,7 +32,7 @@ Password-based login system enhanced with **adaptive two-factor authentication (
 
 1. User enters email and password
 2. System checks device type:
-   - If **mobile**, trigger Number Verification API
+   - If **mobile**, send OTP via SMS
    - If **non-mobile**, send OTP via email
 3. User receives appropriate message:
    - ✅ `Welcome back, [User Name].`
@@ -50,7 +50,7 @@ Collect the following fields via registration form:
 - Phone number (for 2FA)
 
 ---
-### 🌍 Access Control & Risk Detection
+### 🌍 Access Control & Risk Detection - Not yet implemented
 
 Enhance login security through:
 
