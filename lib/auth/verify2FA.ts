@@ -28,7 +28,7 @@ export const verify2FAAction = async (formData: FormData) => {
     });
 
     if (verificationResult.status !== "completed") {
-      throw new Error("Invalid verification code");
+      throw new Error("Verification failed. Please contact support.");
     }
 
     // Set verification cookies
@@ -48,7 +48,9 @@ export const verify2FAAction = async (formData: FormData) => {
     return redirect(
       `${origin}/verifysignin?error=${
         encodeURIComponent(
-          error instanceof Error ? error.message : "Verification failed",
+          error instanceof Error
+            ? error.message
+            : "Verification failed. Please contact support.",
         )
       }`,
     );

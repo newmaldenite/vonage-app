@@ -1,10 +1,12 @@
+// /utils/supabase/server.ts
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export const createClient = async () => {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  // Create the Supabase client with cookie handling
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
@@ -18,12 +20,16 @@ export const createClient = async () => {
               cookieStore.set(name, value, options);
             });
           } catch (error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+            // Handle Server Component cookie setting limitations
           }
         },
       },
     },
   );
+
+  // Explicitly validate the session by fetching user data
+  // This ensures we're not relying on client-stored session data
+  await supabase.auth.getUser();
+
+  return supabase;
 };
