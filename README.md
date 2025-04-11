@@ -10,12 +10,10 @@ The brief was to create a **Next-Gen Secure Access Management Platform** designe
 
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Language**: TypeScript
-- **Backend-as-a-Service**: [Supabase](https://supabase.com/)
+- **Database**: [Supabase](https://supabase.com/)
 - **Communications**: [Vonage APIs](https://developer.vonage.com/)  
-  - Messages API  
-  - Number Verification API  
-  - SIM Swap API  
-  - Location Verification API
+- **Edge Functions** : [Deno](https://deno.land/)
+  - Serverless runtime handling Vonage API interactions (Verify v2)
 
 ---
 
@@ -25,9 +23,9 @@ The brief was to create a **Next-Gen Secure Access Management Platform** designe
 
 Password-based login system enhanced with **adaptive two-factor authentication (2FA)**:
 
-- 📱 **Mobile Device**: Use Vonage **Number Verification API**
+- 📱 **Mobile Device**: Use Vonage **Verify v2 API**
 - 👤 **Admin**: use Supabase **Magic Link** 
-- 💻 **Non-Mobile Device**: Send an OTP via Vonage **Messages API**
+- 💻 **Non-Mobile Device**: Send an OTP to email via Vonage **Verify v2 API**
 - 🔄 **Fallback**: Default to SMS-based 2FA if device detection fails
 
 **Login Flow:**
@@ -35,11 +33,10 @@ Password-based login system enhanced with **adaptive two-factor authentication (
 1. User enters email and password
 2. System checks device type:
    - If **mobile**, trigger Number Verification API
-   - If **non-mobile**, send OTP via SMS
+   - If **non-mobile**, send OTP via email
 3. User receives appropriate message:
    - ✅ `Verification successful! Welcome back, [User Name].`
    - ❌ `Verification failed. Please contact support.`
-   - ❌ `Invalid OTP. Please try again.`
 
 ---
 
